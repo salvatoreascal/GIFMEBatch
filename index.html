@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GIFME - MP4 to GIF Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .donation-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .donation-icon {
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .donation-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .donation-label {
+            font-size: 12px;
+            color: #9C45FB;
+            margin-left: 2px;
+        }
+        
+        .donation-tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .donation-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 320px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            top: 125%;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+        
+        .donation-tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 20px;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent #555 transparent;
+        }
+        
+        .donation-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .app-title {
+            text-align: center;
+            margin-bottom: 5px;
+            flex-grow: 1;
+        }
+        
+        .app-name {
+            color: #00d9e9;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-top: 0;
+        }
+        
+        #dropZone {
+            width: calc(100% - 44px);
+            min-height: 200px;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: #fff;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        
+        #dropZone.dragover {
+            background: #e1e1e1;
+            border-color: #999;
+        }
+        
+        #fileList {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .file-item {
+            width: 120px;
+            text-align: center;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .file-thumbnail {
+            width: 120px;
+            height: 67px;
+            object-fit: cover;
+            border-radius: 4px;
+            background-color: #ddd;
+            margin-bottom: 5px;
+        }
+        
+        .delete-btn {
+            position: absolute;
+            bottom: 25px;
+            right: 0;
+            background-color: rgba(255, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        .delete-btn:hover {
+            background-color: rgba(255, 0, 0, 0.9);
+        }
+        
+        .file-name {
+            font-size: 12px;
+            word-break: break-all;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .controls {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+        
+        .save-location {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        #saveLocationPath {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        #browseButton {
+            background-color: #2196F3;
+        }
+        
+        #browseButton:hover {
+            background-color: #0b7dda;
+        }
+        
+        #status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #fff;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .success {
+            color: #4CAF50;
+        }
+        
+        .error {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="donation-container">
+            <div class="donation-tooltip">
+                <div style="display: flex; align-items: center;" onclick="copyWalletAddress()">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTEgMTVoLTJ2LTZoMnY2em0wLThoLTJ2LTJoMnYyeiIgZmlsbD0iIzlDNDVGQiIvPjwvc3ZnPg==" class="donation-icon" alt="Donate">
+                    <span class="donation-label">Donate</span>
+                </div>
+                <span class="tooltip-text">Support GIFME development with Solana: AfT3cj981fHVbgnssm1FPDjFHQwEe4HiGPoEQcWf47rb (Click to copy)</span>
+            </div>
+        </div>
+        <div class="app-title">
+            <p class="app-name">GIFME</p>
+            <h1>MP4 to GIF Converter</h1>
+        </div>
+        <div style="width: 24px;"></div> <!-- Empty div for balance -->
+    </div>
+    
+    <div id="dropZone">
+        <p>Drag and drop MP4 files here or click to browse</p>
+        <div id="fileList"></div>
+    </div>
+    
+    <div class="controls">
+        <div class="save-location">
+            <label for="saveLocationPath">Save Location:</label>
+            <input type="text" id="saveLocationPath" readonly placeholder="Select a save location...">
+            <button id="browseButton">Browse</button>
+        </div>
+        <button id="convertButton" disabled>Convert to GIF</button>
+    </div>
+    
+    <div id="status"></div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        const path = require('path');
+        
+        const dropZone = document.getElementById('dropZone');
+        const fileList = document.getElementById('fileList');
+        const saveLocationPath = document.getElementById('saveLocationPath');
+        const browseButton = document.getElementById('browseButton');
+        const convertButton = document.getElementById('convertButton');
+        const status = document.getElementById('status');
+        
+        let filesToConvert = [];
+        
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Highlight drop zone when dragging over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('dragover');
+        }
+
+        // Handle dropped files
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        // Handle click on drop zone to open file browser
+        dropZone.addEventListener('click', () => {
+            ipcRenderer.send('select-files');
+        });
+        
+        // Handle selected files from file browser
+        ipcRenderer.on('files-selected', (event, filePaths) => {
+            if (filePaths && filePaths.length > 0) {
+                addFilesToList(filePaths);
+            }
+        });
+        
+        function handleDrop(e) {
+            const files = Array.from(e.dataTransfer.files)
+                .filter(file => file.name.toLowerCase().endsWith('.mp4'))
+                .map(file => file.path);
+
+            if (files.length === 0) {
+                status.innerHTML = '<p class="error">Please drop MP4 files only.</p>';
+                return;
+            }
+
+            // Add files to the list
+            addFilesToList(files);
+        }
+        
+        function addFilesToList(files) {
+            // Add new files to the list
+            files.forEach(filePath => {
+                console.log(`Adding file to list: ${filePath}`);
+                if (!filesToConvert.includes(filePath)) {
+                    filesToConvert.push(filePath);
+                    
+                    // Create file item element
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.dataset.path = filePath;
+                    
+                    // Create thumbnail placeholder
+                    const thumbnail = document.createElement('div');
+                    thumbnail.className = 'file-thumbnail';
+                    thumbnail.style.backgroundColor = '#ddd';
+                    thumbnail.innerHTML = 'Loading...';
+                    
+                    // Create delete button
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.innerHTML = '×';
+                    deleteBtn.title = 'Remove file';
+                    
+                    // Use a separate function for the click handler
+                    deleteBtn.onclick = function(e) {
+                        e.stopPropagation(); // Prevent opening file dialog
+                        console.log(`Delete button clicked for: ${filePath}`);
+                        removeFile(filePath);
+                    };
+                    
+                    // Create filename element
+                    const fileName = document.createElement('div');
+                    fileName.className = 'file-name';
+                    fileName.textContent = path.basename(filePath);
+                    
+                    // Add elements to file item
+                    fileItem.appendChild(thumbnail);
+                    fileItem.appendChild(deleteBtn);
+                    fileItem.appendChild(fileName);
+                    
+                    // Add file item to list
+                    fileList.appendChild(fileItem);
+                    console.log('File item added to DOM');
+                    
+                    // Generate thumbnail
+                    ipcRenderer.send('generate-thumbnail', filePath);
+                    console.log('Thumbnail generation requested');
+                } else {
+                    console.log(`File already in list: ${filePath}`);
+                }
+            });
+            
+            // Update convert button state
+            updateConvertButtonState();
+        }
+        
+        // Handle thumbnail generation
+        ipcRenderer.on('thumbnail-generated', (event, data) => {
+            console.log(`Received thumbnail for: ${data.filePath}`);
+            const fileItem = document.querySelector(`.file-item[data-path="${CSS.escape(data.filePath)}"]`);
+            if (fileItem) {
+                console.log('Found file item in DOM');
+                const thumbnail = fileItem.querySelector('.file-thumbnail');
+                
+                const img = document.createElement('img');
+                img.src = data.thumbnail;
+                img.className = 'file-thumbnail';
+                
+                // Replace the thumbnail div with the image
+                if (thumbnail) {
+                    thumbnail.parentNode.replaceChild(img, thumbnail);
+                    console.log('Thumbnail replaced with image');
+                } else {
+                    console.error('Thumbnail element not found in file item');
+                }
+            } else {
+                console.error(`File item not found for path: ${data.filePath}`);
+            }
+        });
+        
+        ipcRenderer.on('thumbnail-error', (event, data) => {
+            console.error(`Thumbnail error for: ${data.filePath}`, data.error);
+            const fileItem = document.querySelector(`.file-item[data-path="${CSS.escape(data.filePath)}"]`);
+            if (fileItem) {
+                const thumbnail = fileItem.querySelector('.file-thumbnail');
+                if (thumbnail) {
+                    thumbnail.innerHTML = 'Error';
+                    thumbnail.style.backgroundColor = '#ffcccc';
+                }
+            }
+        });
+        
+        // Handle browse button
+        browseButton.addEventListener('click', () => {
+            ipcRenderer.send('select-directory');
+        });
+        
+        // Handle directory selection
+        ipcRenderer.on('directory-selected', (event, dirPath) => {
+            saveLocationPath.value = dirPath;
+            updateConvertButtonState();
+        });
+        
+        // Update convert button state
+        function updateConvertButtonState() {
+            convertButton.disabled = filesToConvert.length === 0 || !saveLocationPath.value;
+        }
+        
+        // Handle convert button
+        convertButton.addEventListener('click', () => {
+            if (filesToConvert.length === 0) {
+                status.innerHTML = '<p class="error">No files to convert.</p>';
+                return;
+            }
+            
+            if (!saveLocationPath.value) {
+                status.innerHTML = '<p class="error">Please select a save location.</p>';
+                return;
+            }
+            
+            status.innerHTML = '<p id="converting-message">Converting files...</p>';
+            convertButton.disabled = true;
+            
+            ipcRenderer.send('convert-files', {
+                filePaths: filesToConvert,
+                outputDirectory: saveLocationPath.value
+            });
+        });
+        
+        // Handle conversion events
+        ipcRenderer.on('conversion-complete', (event, data) => {
+            // Remove the "Converting files..." message when the first file is converted
+            const convertingMessage = document.getElementById('converting-message');
+            if (convertingMessage) {
+                convertingMessage.remove();
+            }
+            
+            const fileName = path.basename(data.originalPath);
+            status.innerHTML += `<p class="success">Converted: ${fileName} -> ${path.basename(data.outputPath)}</p>`;
+        });
+        
+        ipcRenderer.on('all-conversions-complete', () => {
+            status.innerHTML += '<p class="success">All conversions completed!</p>';
+            
+            // Clear file list
+            fileList.innerHTML = '';
+            filesToConvert = [];
+            
+            // Update convert button state
+            updateConvertButtonState();
+        });
+        
+        ipcRenderer.on('conversion-error', (event, error) => {
+            status.innerHTML += `<p class="error">Error: ${error}</p>`;
+            convertButton.disabled = false;
+        });
+        
+        // Add function to remove a file from the list
+        function removeFile(filePath) {
+            console.log(`Removing file: ${filePath}`);
+            
+            // Remove from array
+            const index = filesToConvert.indexOf(filePath);
+            if (index !== -1) {
+                filesToConvert.splice(index, 1);
+                console.log('File removed from array');
+            } else {
+                console.error('File not found in array');
+            }
+            
+            // Remove from DOM - use CSS.escape to handle special characters in selectors
+            const fileItem = document.querySelector(`.file-item[data-path="${CSS.escape(filePath)}"]`);
+            if (fileItem) {
+                fileItem.remove();
+                console.log('File item removed from DOM');
+            } else {
+                console.error('File item not found in DOM');
+            }
+            
+            // Update convert button state
+            updateConvertButtonState();
+        }
+        
+        function copyWalletAddress() {
+            const walletAddress = "AfT3cj981fHVbgnssm1FPDjFHQwEe4HiGPoEQcWf47rb";
+            navigator.clipboard.writeText(walletAddress).then(() => {
+                alert("Solana wallet address copied to clipboard: " + walletAddress);
+            }, (err) => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+{
+  "name": "gifme",
+  "version": "1.0.0",
+  "description": "Convert MP4 files to optimized GIFs",
+  "main": "main.js",
+  "author": "salvatoreascal",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/salvatoreascal/gifme.git"
+  },
+  "homepage": "https://github.com/salvatoreascal/gifme",
+  "bugs": {
+    "url": "https://github.com/salvatoreascal/gifme/issues"
+  },
+  "keywords": [
+    "gif",
+    "mp4",
+    "converter",
+    "electron",
+    "ffmpeg",
+    "gifsicle"
+  ],
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist-nosign": "electron-builder --win --x64 --publish never --config.win.signAndEditExecutable=false --config.win.verifyUpdateCodeSignature=false --config.win.certificateFile='' --config.win.certificatePassword=''",
+    "portable": "electron-builder --win portable --x64 --publish never",
+    "dir": "electron-builder --dir --publish never",
+    "package-win": "electron-packager . GIFME --platform=win32 --arch=x64 --out=dist/packaged --overwrite --icon=build/icon.ico --asar --extra-resource=ffmpeg-win --extra-resource=gifsicle-win --extra-resource=installer",
+    "postinstall": "node installer/post-install.js",
+    "lint": "echo \"No linting configured\"",
+    "test": "echo \"No test specified\"",
+    "build-exe": "build-exe-only.bat",
+    "build-installer": "build-inno-installer.bat"
+  },
+  "build": {
+    "appId": "com.gifme.converter",
+    "productName": "GIFME",
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "extraResources": [
+      {
+        "from": "ffmpeg-win",
+        "to": "ffmpeg-win"
+      },
+      {
+        "from": "gifsicle-win",
+        "to": "gifsicle-win"
+      },
+      {
+        "from": "installer",
+        "to": "installer"
+      }
+    ],
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "include": "installer/installer.nsh",
+      "runAfterFinish": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico"
+    },
+    "portable": {
+      "artifactName": "GIFME-Portable-${version}.exe"
+    },
+    "directories": {
+      "output": "dist",
+      "app": "."
+    }
+  },
+  "devDependencies": {
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
+    "electron-packager": "^17.1.2",
+    "fs-extra": "^11.3.0"
+  }
+}
