@@ -1,4 +1,4 @@
-# GIFME - MP4 to GIF Converter
+# GIFME - Batch MP4 to GIF Converter
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-brightgreen.svg)](https://github.com/salvatoreascal/gifme)
