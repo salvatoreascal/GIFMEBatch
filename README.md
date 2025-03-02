@@ -137,4 +137,3 @@ If you find this application useful, consider supporting development by donating
 ## Contact
 
 GitHub: [https://github.com/salvatoreascal](https://github.com/salvatoreascal)  
-Email: your.email@example.com 
