@@ -83,5 +83,8 @@
     "electron-builder": "^24.9.1",
     "electron-packager": "^17.1.2",
     "fs-extra": "^11.3.0"
+  },
+  "dependencies": {
+    "cropperjs": "^1.6.1"
   }
 }

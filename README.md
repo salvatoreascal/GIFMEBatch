@@ -11,14 +11,20 @@ GIFME Batch gif converter is a user-friendly desktop app that can convert batche
 - Batch processing of multiple videos at once
 - Preview thumbnails of videos before conversion
 - High-quality GIF conversion with optimized settings
+- Advanced cropping tool to select specific areas of videos
+- Real-time conversion progress with ETA and file information
+- Customizable quality settings (FPS, colors, optimization level)
+- Save and load custom presets for different conversion needs
 - Bundled with FFmpeg and Gifsicle - no external dependencies required
 - Simple and intuitive user interface
+- Automatic updates via standalone updater
 - Support development with Solana donations
 
 ## Screenshots
 
-![GIFME Application](screenshots/app-screenshot.png)
-![Conversion Process](screenshots/conversion-screenshot.png)
+![GIFME Main Interface](screenshots/main-screenshot.png)
+![Quality Settings](screenshots/quality-screenshot.png)
+![Crop Tool](screenshots/crop-screenshot.png)
 
 ## Installation
 
@@ -34,13 +40,61 @@ GIFME Batch gif converter is a user-friendly desktop app that can convert batche
 2. Extract the ZIP file to any location
 3. Run `GIFME.exe` to start the application
 
+## Updates
+
+### Using the Updater
+
+1. Download the latest `GIFME-Updater.exe` from the [releases page](https://github.com/salvatoreascal/gifme/releases)
+2. Run the updater application
+3. The updater will automatically detect your GIFME installation
+4. If a new version is available, the updater will download and install it
+5. Your settings and preferences will be preserved during the update
+
+### Manual Update
+
+1. Download the latest version from the [releases page](https://github.com/salvatoreascal/gifme/releases)
+2. Uninstall the previous version (if using the installer)
+3. Install the new version
+
 ## Usage
 
 1. Launch the GIFME application
 2. Drag and drop MP4 files onto the drop zone, or click to browse for files
 3. Select a save location for the converted GIFs
-4. Click the "Convert to GIF" button
-5. The converted GIFs will be saved to the selected location
+4. Customize conversion settings (optional):
+   - Adjust quality settings (FPS, colors, optimization)
+   - Apply crops to select specific areas of videos
+   - Save your settings as a preset for future use
+5. Click the "Convert to GIF" button
+6. Monitor conversion progress in real-time
+7. The converted GIFs will be saved to the selected location
+
+## Advanced Features
+
+### Cropping Videos
+
+1. Select a video from the list
+2. Click on the "Crop" tab
+3. Use the cropping tool to select the area you want to keep
+4. Click "Apply Crop" to save your selection
+5. A "CROPPED" indicator will appear on the video thumbnail
+6. To remove a crop, select the video and click "Reset Crop"
+
+### Quality Settings
+
+1. Click on the "Quality" tab
+2. Adjust the following settings:
+   - FPS (frames per second): Higher values create smoother animations but larger files
+   - Colors: Reduce colors to decrease file size
+   - Optimization level: Higher values create smaller files but take longer to process
+   - Lossy compression: Reduce file size with some quality loss
+3. Click "Save as Preset" to store your settings for future use
+
+### Presets
+
+1. Create custom presets by adjusting quality settings and clicking "Save as Preset"
+2. Load existing presets from the dropdown menu
+3. Delete custom presets by selecting them and clicking the delete button
 
 ## Technical Details
 
@@ -48,6 +102,7 @@ GIFME is built with:
 - [Electron](https://www.electronjs.org/) - Cross-platform desktop application framework
 - [FFmpeg](https://ffmpeg.org/) - Video processing library
 - [Gifsicle](https://www.lcdf.org/gifsicle/) - GIF optimization tool
+- [Cropper.js](https://fengyuanchen.github.io/cropperjs/) - Image cropping library
 
 ## Building from Source
 
@@ -92,6 +147,7 @@ Due to GitHub file size limitations, FFmpeg executables are not included in this
 ### Building the Executable
 
 1. Make sure you have the FFmpeg and Gifsicle binaries in the `ffmpeg-win` and `gifsicle-win` directories
+
 2. Build the executable:
    ```
    .\build-exe-only.bat
@@ -106,7 +162,15 @@ Due to GitHub file size limitations, FFmpeg executables are not included in this
    ```
    .\build-inno-installer.bat
    ```
-4. The installer will be created as `dist\GIFME-Setup.exe`
+4. The installer will be created as `dist_v2\GIFME-Setup.exe`
+
+### Building the Updater
+
+1. Build the updater executable:
+   ```
+   .\build-updater.bat
+   ```
+2. The updater will be created as `dist_v2\GIFME-Updater.exe`
 
 ## Contributing
 
@@ -125,11 +189,13 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [FFmpeg](https://ffmpeg.org/) - For video processing
 - [Gifsicle](https://www.lcdf.org/gifsicle/) - For GIF optimization
 - [Electron](https://www.electronjs.org/) - For the application framework
+- [Cropper.js](https://fengyuanchen.github.io/cropperjs/) - For the image cropping functionality
 - [Inno Setup](https://jrsoftware.org/isinfo.php) - For creating the Windows installer
 
 ## Support
 
 If you find this application useful, consider supporting development by donating to our Solana wallet:
+
 ```
 8ZwXjQsVPiQRGgM4qhNiWYmJLaYnJjhwwmXpYEDYE7Gn
 ```

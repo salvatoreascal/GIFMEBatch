@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GIFME Updater</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      overflow: hidden;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .logo {
+      width: 48px;
+      height: 48px;
+      margin-right: 15px;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #2c3e50;
+    }
+    
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+    
+    .status-container {
+      margin-bottom: 20px;
+    }
+    
+    .status {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    
+    .log {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 12px;
+      height: 150px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    
+    .progress-container {
+      margin-top: 20px;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background-color: #e9ecef;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background-color: #4CAF50;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+      font-size: 14px;
+      text-align: center;
+      color: #6c757d;
+    }
+    
+    .footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    
+    button:hover {
+      background-color: #45a049;
+    }
+    
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    .cancel-btn {
+      background-color: #f44336;
+      margin-right: 10px;
+    }
+    
+    .cancel-btn:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="icon.ico" alt="GIFME Logo" class="logo">
+      <h1>GIFME Updater</h1>
+    </div>
+    
+    <div class="content">
+      <div class="status-container">
+        <div class="status" id="status">Initializing updater...</div>
+      </div>
+      
+      <div class="log" id="log"></div>
+      
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-text" id="progress-text">0%</div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <button id="cancel-btn" class="cancel-btn">Cancel</button>
+      <button id="check-btn">Check for Updates</button>
+    </div>
+  </div>
+  
+  <script>
+    const { ipcRenderer } = require('electron');
+    
+    const statusElement = document.getElementById('status');
+    const logElement = document.getElementById('log');
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const checkButton = document.getElementById('check-btn');
+    const cancelButton = document.getElementById('cancel-btn');
+    
+    // Add a log entry
+    function addLogEntry(message) {
+      const timestamp = new Date().toLocaleTimeString();
+      logElement.innerHTML += `[${timestamp}] ${message}\n`;
+      logElement.scrollTop = logElement.scrollHeight;
+    }
+    
+    // Update status
+    function updateStatus(message) {
+      statusElement.textContent = message;
+      addLogEntry(message);
+    }
+    
+    // Update progress bar
+    function updateProgress(percent) {
+      progressFill.style.width = `${percent}%`;
+      progressText.textContent = `${percent}%`;
+    }
+    
+    // Listen for status updates
+    ipcRenderer.on('update-status', (event, message) => {
+      updateStatus(message);
+    });
+    
+    // Listen for progress updates
+    ipcRenderer.on('update-progress', (event, percent) => {
+      updateProgress(percent);
+    });
+    
+    // Check for updates button
+    checkButton.addEventListener('click', () => {
+      updateStatus('Checking for updates...');
+      updateProgress(0);
+      ipcRenderer.send('check-for-updates');
+      checkButton.disabled = true;
+    });
+    
+    // Cancel button
+    cancelButton.addEventListener('click', () => {
+      if (confirm('Are you sure you want to cancel the update process?')) {
+        ipcRenderer.send('quit-app');
+      }
+    });
+    
+    // Initialize
+    updateStatus('Ready to check for updates.');
+    updateProgress(0);
+  </script>
+</body>
+</html> 

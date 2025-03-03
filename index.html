@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>GIFME - MP4 to GIF Converter</title>
+    <link rel="stylesheet" href="node_modules/cropperjs/dist/cropper.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -97,7 +98,7 @@
             margin-top: 0;
         }
         
-        #dropZone {
+        #drop-zone {
             width: calc(100% - 44px);
             min-height: 200px;
             border: 2px dashed #ccc;
@@ -110,12 +111,12 @@
             box-sizing: border-box;
         }
         
-        #dropZone.dragover {
+        #drop-zone.dragover {
             background: #e1e1e1;
             border-color: #999;
         }
         
-        #fileList {
+        #file-list {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
@@ -236,13 +237,232 @@
         .error {
             color: #f44336;
         }
+        
+        /* Tab styles */
+        .tab-container {
+            margin: 20px 0;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 2px;
+            background: #f0f0f0;
+            padding: 5px 5px 0;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            color: #666;
+        }
+        
+        .tab:hover {
+            background: #d0d0d0;
+        }
+        
+        .tab.active {
+            background: #ffffff;
+            font-weight: bold;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #2196F3;
+            color: #2196F3;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: #fff;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Quality Settings styles */
+        .quality-settings {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .preset-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .settings-section {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .settings-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .setting-item {
+            margin-bottom: 10px;
+        }
+        
+        .setting-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .setting-item input,
+        .setting-item select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        /* Crop tab styles */
+        .crop-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+        }
+        
+        .thumbnails-list {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .crop-preview {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .crop-dimensions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .crop-dimensions input {
+            width: 100px;
+        }
+        
+        .crop-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* Trash icon for delete button */
+        .trash-icon {
+            width: 10px;
+            height: 10px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .trash-icon:before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 2px;
+            background: white;
+            top: -3px;
+            left: 0;
+        }
+        
+        .trash-icon:after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 8px;
+            border: 2px solid white;
+            border-top: none;
+            top: 0;
+            left: 0;
+        }
+        
+        /* Progress container styles */
+        .progress-container {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #fff;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .cancel-button {
+            padding: 8px 15px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .cancel-button:hover {
+            background-color: #d32f2f;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .progress-stats {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .progress-bar-container {
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 0.3s;
+        }
     </style>
 </head>
 <body>
     <div class="app-header">
         <div class="donation-container">
             <div class="donation-tooltip">
-                <div style="display: flex; align-items: center;" onclick="copyWalletAddress()">
+                <div id="donateButton" style="display: flex; align-items: center;">
                     <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTEgMTVoLTJ2LTZoMnY2em0wLThoLTJ2LTJoMnYyeiIgZmlsbD0iIzlDNDVGQiIvPjwvc3ZnPg==" class="donation-icon" alt="Donate">
                     <span class="donation-label">Donate</span>
                 </div>
@@ -253,287 +473,165 @@
             <p class="app-name">GIFME</p>
             <h1>MP4 to GIF Converter</h1>
         </div>
-        <div style="width: 24px;"></div> <!-- Empty div for balance -->
     </div>
-    
-    <div id="dropZone">
-        <p>Drag and drop MP4 files here or click to browse</p>
-        <div id="fileList"></div>
-    </div>
-    
-    <div class="controls">
-        <div class="save-location">
-            <label for="saveLocationPath">Save Location:</label>
-            <input type="text" id="saveLocationPath" readonly placeholder="Select a save location...">
-            <button id="browseButton">Browse</button>
+
+    <div class="tab-container">
+        <div class="tabs">
+            <button class="tab active" data-tab="files">Files</button>
+            <button class="tab" data-tab="quality">Quality Settings</button>
+            <button class="tab" data-tab="crop">Crop</button>
         </div>
-        <button id="convertButton" disabled>Convert to GIF</button>
+        
+        <div class="tab-content active" id="files-tab">
+            <div id="drop-zone">
+                <p>Drag and drop MP4 files here or click to browse</p>
+                <div id="file-list"></div>
+            </div>
+            
+            <div class="controls">
+                <div class="save-location">
+                    <label for="saveLocationPath">Save Location:</label>
+                    <input type="text" id="saveLocationPath" readonly placeholder="Select a save location...">
+                    <button id="browseButton">Browse</button>
+                </div>
+                <button id="convert-button" disabled>Convert to GIF</button>
+            </div>
+            
+            <div id="progress-container" class="progress-container" style="display: none;">
+                <div class="progress-header">
+                    <h3>Converting Files</h3>
+                    <button id="cancel-conversion" class="cancel-button">Cancel</button>
+                </div>
+                <div class="progress-info">
+                    <div id="progress-file">Converting: </div>
+                    <div class="progress-stats">
+                        <div id="progress-count">0/0 files</div>
+                        <div id="progress-percent">0%</div>
+                    </div>
+                    <div id="progress-eta">Estimated time: calculating...</div>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="quality-tab">
+            <div class="quality-settings">
+                <div class="preset-section">
+                    <select id="presetSelect">
+                        <option value="default">Default Preset</option>
+                        <option value="best">Best Quality</option>
+                        <option value="high">High Quality</option>
+                        <option value="medium">Medium Quality</option>
+                        <option value="low">Low Quality</option>
+                        <option value="potato">Potato Quality</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <button id="savePreset" disabled>Save as Preset</button>
+                    <button id="deletePreset" disabled>Delete Preset</button>
+                </div>
+                
+                <div class="settings-grid">
+                    <div class="settings-section">
+                        <h3>FFmpeg Settings</h3>
+                        <div class="setting-item">
+                            <label for="fps">Frame Rate (FPS):</label>
+                            <input type="number" id="fps" min="1" max="60" value="12">
+                        </div>
+                        <div class="setting-item">
+                            <label for="scale">Scale:</label>
+                            <input type="text" id="scale" value="480:-1">
+                        </div>
+                        <div class="setting-item">
+                            <label for="filters">Additional Filters:</label>
+                            <input type="text" id="filters" placeholder="e.g., fps=12,scale=480:-1">
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>Gifsicle Settings</h3>
+                        <div class="setting-item">
+                            <label for="optimization">Optimization Level:</label>
+                            <select id="optimization">
+                                <option value="1">Level 1 (Fast)</option>
+                                <option value="2">Level 2</option>
+                                <option value="3" selected>Level 3 (Best)</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label for="lossy">Lossy Compression:</label>
+                            <input type="number" id="lossy" min="0" max="200" value="80">
+                        </div>
+                        <div class="setting-item">
+                            <label for="colors">Colors:</label>
+                            <input type="number" id="colors" min="2" max="256" value="256">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="crop-tab">
+            <div class="crop-container">
+                <div class="thumbnails-list" id="cropThumbnails">
+                    <!-- Thumbnails will be added here dynamically -->
+                </div>
+                
+                <div class="crop-preview">
+                    <div id="cropPreviewImage">
+                        <!-- Preview image will be added here -->
+                    </div>
+                    
+                    <div class="crop-dimensions">
+                        <div class="setting-item">
+                            <label for="cropWidth">Width</label>
+                            <input type="number" id="cropWidth" min="1">
+                        </div>
+                        <div class="setting-item">
+                            <label for="cropHeight">Height</label>
+                            <input type="number" id="cropHeight" min="1">
+                        </div>
+                    </div>
+                    
+                    <div class="crop-actions">
+                        <button id="applyCrop">Apply Crop</button>
+                        <button id="applyToAll">Apply to All</button>
+                        <button id="resetCrop">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
+
     <div id="status"></div>
 
-    <script>
-        const { ipcRenderer } = require('electron');
-        const path = require('path');
-        
-        const dropZone = document.getElementById('dropZone');
-        const fileList = document.getElementById('fileList');
-        const saveLocationPath = document.getElementById('saveLocationPath');
-        const browseButton = document.getElementById('browseButton');
-        const convertButton = document.getElementById('convertButton');
-        const status = document.getElementById('status');
-        
-        let filesToConvert = [];
-        
-        // Prevent default drag behaviors
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
-            document.body.addEventListener(eventName, preventDefaults, false);
-        });
+    <!-- Custom Modal for Preset Name -->
+    <div id="presetModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background-color: white; padding: 20px; border-radius: 5px; width: 300px;">
+            <h3 style="margin-top: 0;">Save Preset</h3>
+            <p>Enter a name for your preset:</p>
+            <input type="text" id="presetNameInput" style="width: 100%; padding: 8px; margin-bottom: 15px; box-sizing: border-box;">
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button id="cancelPresetBtn" style="background-color: #ccc;">Cancel</button>
+                <button id="savePresetNameBtn">Save</button>
+            </div>
+        </div>
+    </div>
 
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
+    <!-- Custom Confirmation Modal for Delete -->
+    <div id="confirmModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background-color: white; padding: 20px; border-radius: 5px; width: 300px;">
+            <h3 style="margin-top: 0;">Confirm Delete</h3>
+            <p id="confirmMessage">Are you sure you want to delete this preset?</p>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button id="cancelConfirmBtn" style="background-color: #ccc;">Cancel</button>
+                <button id="confirmBtn" style="background-color: #f44336; color: white;">Delete</button>
+            </div>
+        </div>
+    </div>
 
-        // Highlight drop zone when dragging over it
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, highlight, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, unhighlight, false);
-        });
-
-        function highlight(e) {
-            dropZone.classList.add('dragover');
-        }
-
-        function unhighlight(e) {
-            dropZone.classList.remove('dragover');
-        }
-
-        // Handle dropped files
-        dropZone.addEventListener('drop', handleDrop, false);
-
-        // Handle click on drop zone to open file browser
-        dropZone.addEventListener('click', () => {
-            ipcRenderer.send('select-files');
-        });
-        
-        // Handle selected files from file browser
-        ipcRenderer.on('files-selected', (event, filePaths) => {
-            if (filePaths && filePaths.length > 0) {
-                addFilesToList(filePaths);
-            }
-        });
-        
-        function handleDrop(e) {
-            const files = Array.from(e.dataTransfer.files)
-                .filter(file => file.name.toLowerCase().endsWith('.mp4'))
-                .map(file => file.path);
-
-            if (files.length === 0) {
-                status.innerHTML = '<p class="error">Please drop MP4 files only.</p>';
-                return;
-            }
-
-            // Add files to the list
-            addFilesToList(files);
-        }
-        
-        function addFilesToList(files) {
-            // Add new files to the list
-            files.forEach(filePath => {
-                console.log(`Adding file to list: ${filePath}`);
-                if (!filesToConvert.includes(filePath)) {
-                    filesToConvert.push(filePath);
-                    
-                    // Create file item element
-                    const fileItem = document.createElement('div');
-                    fileItem.className = 'file-item';
-                    fileItem.dataset.path = filePath;
-                    
-                    // Create thumbnail placeholder
-                    const thumbnail = document.createElement('div');
-                    thumbnail.className = 'file-thumbnail';
-                    thumbnail.style.backgroundColor = '#ddd';
-                    thumbnail.innerHTML = 'Loading...';
-                    
-                    // Create delete button
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.className = 'delete-btn';
-                    deleteBtn.innerHTML = '×';
-                    deleteBtn.title = 'Remove file';
-                    
-                    // Use a separate function for the click handler
-                    deleteBtn.onclick = function(e) {
-                        e.stopPropagation(); // Prevent opening file dialog
-                        console.log(`Delete button clicked for: ${filePath}`);
-                        removeFile(filePath);
-                    };
-                    
-                    // Create filename element
-                    const fileName = document.createElement('div');
-                    fileName.className = 'file-name';
-                    fileName.textContent = path.basename(filePath);
-                    
-                    // Add elements to file item
-                    fileItem.appendChild(thumbnail);
-                    fileItem.appendChild(deleteBtn);
-                    fileItem.appendChild(fileName);
-                    
-                    // Add file item to list
-                    fileList.appendChild(fileItem);
-                    console.log('File item added to DOM');
-                    
-                    // Generate thumbnail
-                    ipcRenderer.send('generate-thumbnail', filePath);
-                    console.log('Thumbnail generation requested');
-                } else {
-                    console.log(`File already in list: ${filePath}`);
-                }
-            });
-            
-            // Update convert button state
-            updateConvertButtonState();
-        }
-        
-        // Handle thumbnail generation
-        ipcRenderer.on('thumbnail-generated', (event, data) => {
-            console.log(`Received thumbnail for: ${data.filePath}`);
-            const fileItem = document.querySelector(`.file-item[data-path="${CSS.escape(data.filePath)}"]`);
-            if (fileItem) {
-                console.log('Found file item in DOM');
-                const thumbnail = fileItem.querySelector('.file-thumbnail');
-                
-                const img = document.createElement('img');
-                img.src = data.thumbnail;
-                img.className = 'file-thumbnail';
-                
-                // Replace the thumbnail div with the image
-                if (thumbnail) {
-                    thumbnail.parentNode.replaceChild(img, thumbnail);
-                    console.log('Thumbnail replaced with image');
-                } else {
-                    console.error('Thumbnail element not found in file item');
-                }
-            } else {
-                console.error(`File item not found for path: ${data.filePath}`);
-            }
-        });
-        
-        ipcRenderer.on('thumbnail-error', (event, data) => {
-            console.error(`Thumbnail error for: ${data.filePath}`, data.error);
-            const fileItem = document.querySelector(`.file-item[data-path="${CSS.escape(data.filePath)}"]`);
-            if (fileItem) {
-                const thumbnail = fileItem.querySelector('.file-thumbnail');
-                if (thumbnail) {
-                    thumbnail.innerHTML = 'Error';
-                    thumbnail.style.backgroundColor = '#ffcccc';
-                }
-            }
-        });
-        
-        // Handle browse button
-        browseButton.addEventListener('click', () => {
-            ipcRenderer.send('select-directory');
-        });
-        
-        // Handle directory selection
-        ipcRenderer.on('directory-selected', (event, dirPath) => {
-            saveLocationPath.value = dirPath;
-            updateConvertButtonState();
-        });
-        
-        // Update convert button state
-        function updateConvertButtonState() {
-            convertButton.disabled = filesToConvert.length === 0 || !saveLocationPath.value;
-        }
-        
-        // Handle convert button
-        convertButton.addEventListener('click', () => {
-            if (filesToConvert.length === 0) {
-                status.innerHTML = '<p class="error">No files to convert.</p>';
-                return;
-            }
-            
-            if (!saveLocationPath.value) {
-                status.innerHTML = '<p class="error">Please select a save location.</p>';
-                return;
-            }
-            
-            status.innerHTML = '<p id="converting-message">Converting files...</p>';
-            convertButton.disabled = true;
-            
-            ipcRenderer.send('convert-files', {
-                filePaths: filesToConvert,
-                outputDirectory: saveLocationPath.value
-            });
-        });
-        
-        // Handle conversion events
-        ipcRenderer.on('conversion-complete', (event, data) => {
-            // Remove the "Converting files..." message when the first file is converted
-            const convertingMessage = document.getElementById('converting-message');
-            if (convertingMessage) {
-                convertingMessage.remove();
-            }
-            
-            const fileName = path.basename(data.originalPath);
-            status.innerHTML += `<p class="success">Converted: ${fileName} -> ${path.basename(data.outputPath)}</p>`;
-        });
-        
-        ipcRenderer.on('all-conversions-complete', () => {
-            status.innerHTML += '<p class="success">All conversions completed!</p>';
-            
-            // Clear file list
-            fileList.innerHTML = '';
-            filesToConvert = [];
-            
-            // Update convert button state
-            updateConvertButtonState();
-        });
-        
-        ipcRenderer.on('conversion-error', (event, error) => {
-            status.innerHTML += `<p class="error">Error: ${error}</p>`;
-            convertButton.disabled = false;
-        });
-        
-        // Add function to remove a file from the list
-        function removeFile(filePath) {
-            console.log(`Removing file: ${filePath}`);
-            
-            // Remove from array
-            const index = filesToConvert.indexOf(filePath);
-            if (index !== -1) {
-                filesToConvert.splice(index, 1);
-                console.log('File removed from array');
-            } else {
-                console.error('File not found in array');
-            }
-            
-            // Remove from DOM - use CSS.escape to handle special characters in selectors
-            const fileItem = document.querySelector(`.file-item[data-path="${CSS.escape(filePath)}"]`);
-            if (fileItem) {
-                fileItem.remove();
-                console.log('File item removed from DOM');
-            } else {
-                console.error('File item not found in DOM');
-            }
-            
-            // Update convert button state
-            updateConvertButtonState();
-        }
-        
-        function copyWalletAddress() {
-            const walletAddress = "AfT3cj981fHVbgnssm1FPDjFHQwEe4HiGPoEQcWf47rb";
-            navigator.clipboard.writeText(walletAddress).then(() => {
-                alert("Solana wallet address copied to clipboard: " + walletAddress);
-            }, (err) => {
-                console.error('Could not copy text: ', err);
-            });
-        }
-    </script>
+    <script src="node_modules/cropperjs/dist/cropper.min.js"></script>
+    <script src="renderer.js"></script>
 </body>
 </html>
