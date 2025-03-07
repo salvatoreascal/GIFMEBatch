@@ -1,5 +1,5 @@
 #define MyAppName "GIFME"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.1.0"
 #define MyAppPublisher "salvatoreascal"
 #define MyAppURL ""
 #define MyAppExeName "GIFME.exe"
@@ -41,6 +41,9 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "dist_v2\packaged\GIFME-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "ffmpeg-win\bin\ffmpeg.exe"; DestDir: "{app}\resources\ffmpeg-win\bin"; Flags: ignoreversion
+Source: "ffmpeg-win\bin\ffprobe.exe"; DestDir: "{app}\resources\ffmpeg-win\bin"; Flags: ignoreversion
+Source: "ffmpeg-win\bin\ffplay.exe"; DestDir: "{app}\resources\ffmpeg-win\bin"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GIFME Updater</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      overflow: hidden;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .logo {
+      width: 48px;
+      height: 48px;
+      margin-right: 15px;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #2c3e50;
+    }
+    
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+    
+    .status-container {
+      margin-bottom: 20px;
+    }
+    
+    .status {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    
+    .log {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 12px;
+      height: 150px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    
+    .progress-container {
+      margin-top: 20px;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background-color: #e9ecef;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background-color: #4CAF50;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+      font-size: 14px;
+      text-align: center;
+      color: #6c757d;
+    }
+    
+    .footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    
+    button:hover {
+      background-color: #45a049;
+    }
+    
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    .cancel-btn {
+      background-color: #f44336;
+      margin-right: 10px;
+    }
+    
+    .cancel-btn:hover {
+      background-color: #d32f2f;
+    }
+    
+    .browse-btn {
+      background-color: #2196F3;
+      margin-right: 10px;
+    }
+    
+    .browse-btn:hover {
+      background-color: #0b7dda;
+    }
+    
+    .success-icon {
+      color: #4CAF50;
+      font-size: 48px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    .error-icon {
+      color: #f44336;
+      font-size: 48px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    .hidden {
+      display: none;
+    }
+
+    .input-container {
+      margin-bottom: 15px;
+    }
+
+    .input-container input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="icon.ico" alt="GIFME Logo" class="logo" id="logo">
+      <h1>GIFME Updater</h1>
+    </div>
+    
+    <div class="content">
+      <div class="status-container">
+        <div class="status" id="status">Initializing updater...</div>
+      </div>
+      
+      <div id="path-input-container" class="input-container hidden">
+        <p>Please enter the path to your GIFME installation:</p>
+        <input type="text" id="path-input" placeholder="C:\Program Files\GIFME">
+      </div>
+      
+      <div class="log" id="log"></div>
+      
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-text" id="progress-text">0%</div>
+      </div>
+      
+      <div id="success-container" class="hidden">
+        <div class="success-icon">✓</div>
+        <p style="text-align: center;">Update completed successfully!</p>
+      </div>
+      
+      <div id="error-container" class="hidden">
+        <div class="error-icon">✗</div>
+        <p style="text-align: center;">An error occurred during the update process.</p>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <button id="browse-btn" class="browse-btn hidden">Browse...</button>
+      <button id="submit-path-btn" class="browse-btn hidden">Submit</button>
+      <button id="cancel-btn" class="cancel-btn hidden">Cancel</button>
+      <button id="check-btn" class="hidden">Check for Updates</button>
+      <button id="launch-btn" class="hidden">Launch GIFME</button>
+      <button id="quit-btn" class="hidden">Exit</button>
+    </div>
+  </div>
+  
+  <script>
+    const { ipcRenderer } = require('electron');
+    
+    // DOM Elements
+    const statusEl = document.getElementById('status');
+    const logEl = document.getElementById('log');
+    const progressFillEl = document.getElementById('progress-fill');
+    const progressTextEl = document.getElementById('progress-text');
+    const pathInputContainerEl = document.getElementById('path-input-container');
+    const pathInputEl = document.getElementById('path-input');
+    const browseBtn = document.getElementById('browse-btn');
+    const submitPathBtn = document.getElementById('submit-path-btn');
+    const checkBtn = document.getElementById('check-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const launchBtn = document.getElementById('launch-btn');
+    const quitBtn = document.getElementById('quit-btn');
+    const successContainerEl = document.getElementById('success-container');
+    const errorContainerEl = document.getElementById('error-container');
+    
+    // Global variables
+    let appPath = null;
+    let updateInProgress = false;
+    let updateCompleted = false;
+    
+    // Add a message to the log
+    function addToLog(message) {
+      const timestamp = new Date().toLocaleTimeString();
+      logEl.innerHTML += `[${timestamp}] ${message}\n`;
+      logEl.scrollTop = logEl.scrollHeight;
+      console.log(`[${timestamp}] ${message}`); // Also log to console
+    }
+    
+    // Update the status message
+    function updateStatus(message) {
+      statusEl.textContent = message;
+      addToLog(message);
+    }
+    
+    // Update the progress bar
+    function updateProgress(percent) {
+      progressFillEl.style.width = `${percent}%`;
+      progressTextEl.textContent = `${percent}%`;
+    }
+    
+    // Handle different update actions
+    function handleAction(action) {
+      addToLog(`Handling action: ${action}`);
+      
+      // Reset UI elements
+      successContainerEl.classList.add('hidden');
+      errorContainerEl.classList.add('hidden');
+      pathInputContainerEl.classList.add('hidden');
+      browseBtn.classList.add('hidden');
+      submitPathBtn.classList.add('hidden');
+      checkBtn.classList.add('hidden');
+      cancelBtn.classList.add('hidden');
+      launchBtn.classList.add('hidden');
+      quitBtn.classList.add('hidden');
+      
+      switch(action) {
+        case 'select-path':
+          pathInputContainerEl.classList.remove('hidden');
+          browseBtn.classList.remove('hidden');
+          submitPathBtn.classList.remove('hidden');
+          quitBtn.classList.remove('hidden');
+          break;
+          
+        case 'ready':
+          checkBtn.classList.remove('hidden');
+          quitBtn.classList.remove('hidden');
+          break;
+          
+        case 'checking':
+        case 'downloading':
+        case 'installing':
+          cancelBtn.classList.remove('hidden');
+          break;
+          
+        case 'completed':
+          launchBtn.classList.remove('hidden');
+          quitBtn.classList.remove('hidden');
+          successContainerEl.classList.remove('hidden');
+          break;
+          
+        case 'error':
+          checkBtn.classList.remove('hidden');
+          quitBtn.classList.remove('hidden');
+          errorContainerEl.classList.remove('hidden');
+          break;
+          
+        case 'up-to-date':
+        case 'cancelled':
+          checkBtn.classList.remove('hidden');
+          quitBtn.classList.remove('hidden');
+          break;
+          
+        default:
+          addToLog(`Unknown action: ${action}`);
+          break;
+      }
+    }
+    
+    // Browse for GIFME installation
+    async function browseForGIFMEInstallation() {
+      try {
+        addToLog('Calling browse-for-gifme IPC handler');
+        const result = await ipcRenderer.invoke('browse-for-gifme');
+        addToLog(`Result from browse-for-gifme: ${JSON.stringify(result)}`);
+        
+        if (result && result.selected) {
+          appPath = result.path;
+          updateStatus(`Installation directory set to: ${appPath}`);
+          handleAction('ready');
+        }
+      } catch (error) {
+        addToLog(`Error browsing for directory: ${error.message}`);
+        updateStatus(`Error browsing for directory: ${error.message}`);
+        handleAction('select-path');
+      }
+    }
+    
+    // Check for updates
+    async function checkForUpdates() {
+      if (!appPath) {
+        updateStatus('GIFME installation not found. Please select the installation directory.');
+        handleAction('select-path');
+        return;
+      }
+      
+      updateStatus('Checking for updates...');
+      handleAction('checking');
+      updateProgress(0);
+      
+      try {
+        addToLog(`Calling check-for-updates IPC handler with appPath: ${appPath}`);
+        const result = await ipcRenderer.invoke('check-for-updates', { appPath });
+        addToLog(`Result from check-for-updates: ${JSON.stringify(result)}`);
+        
+        if (result.error) {
+          updateStatus(`Error checking for updates: ${result.error}`);
+          updateInProgress = false;
+          handleAction('error');
+          return;
+        }
+        
+        if (result.hasUpdate) {
+          updateStatus(`Update available: ${result.currentVersion} → ${result.latestVersion}`);
+          updateInProgress = true;
+          handleAction('update-available');
+          
+          // If there are release notes, display them
+          if (result.releaseNotes) {
+            const releaseNotesEl = document.getElementById('release-notes');
+            if (releaseNotesEl) {
+              releaseNotesEl.textContent = result.releaseNotes;
+              releaseNotesEl.style.display = 'block';
+            }
+          }
+          
+          // Automatically start the download
+          await downloadUpdate(result.downloadUrl, result.latestVersion);
+        } else {
+          updateStatus(`You have the latest version (${result.currentVersion})`);
+          updateInProgress = false;
+          handleAction('up-to-date');
+        }
+      } catch (error) {
+        addToLog(`Error checking for updates: ${error.message}`);
+        updateStatus(`Error checking for updates: ${error.message}`);
+        updateInProgress = false;
+        handleAction('error');
+      }
+    }
+    
+    // Download the update
+    async function downloadUpdate(url, version) {
+      updateStatus('Downloading update...');
+      handleAction('downloading');
+      updateProgress(0);
+      
+      try {
+        addToLog(`Calling download-update IPC handler with url: ${url}, version: ${version}`);
+        const result = await ipcRenderer.invoke('download-update', { url, version, appPath });
+        addToLog(`Result from download-update: ${JSON.stringify(result)}`);
+        
+        if (result.error) {
+          updateStatus(`Error downloading update: ${result.error}`);
+          updateInProgress = false;
+          handleAction('error');
+          return;
+        }
+        
+        // If the download was cancelled, don't proceed to installation
+        if (!updateInProgress) {
+          addToLog('Download was cancelled, not proceeding to installation');
+          return;
+        }
+        
+        updateStatus('Download complete. Preparing to install...');
+        await installUpdate(result.downloadPath, result.appPath);
+      } catch (error) {
+        addToLog(`Error downloading update: ${error.message}`);
+        updateStatus(`Error downloading update: ${error.message}`);
+        updateInProgress = false;
+        handleAction('error');
+      }
+    }
+    
+    // Install the update
+    async function installUpdate(downloadPath, appPath) {
+      updateStatus('Installing update...');
+      handleAction('installing');
+      updateProgress(0);
+      
+      try {
+        addToLog(`Calling install-update IPC handler with downloadPath: ${downloadPath}, appPath: ${appPath}`);
+        const result = await ipcRenderer.invoke('install-update', { downloadPath, appPath });
+        addToLog(`Result from install-update: ${JSON.stringify(result)}`);
+        
+        if (result.error) {
+          updateStatus(`Error installing update: ${result.error}`);
+          updateInProgress = false;
+          handleAction('error');
+          return;
+        }
+        
+        if (result.cancelled) {
+          updateStatus('Installation cancelled by user.');
+          updateInProgress = false;
+          handleAction('cancelled');
+          return;
+        }
+        
+        // Ensure progress is set to 100% when installation is complete
+        updateProgress(100);
+        updateStatus('Installation complete.');
+        updateInProgress = false;
+        updateCompleted = true;
+        handleAction('completed');
+      } catch (error) {
+        addToLog(`Error installing update: ${error.message}`);
+        updateStatus(`Error installing update: ${error.message}`);
+        updateInProgress = false;
+        handleAction('error');
+      }
+    }
+    
+    // Launch GIFME
+    async function launchGIFME() {
+      if (appPath) {
+        updateStatus('Launching GIFME...');
+        
+        try {
+          addToLog(`Calling launch-gifme IPC handler with appPath: ${appPath}`);
+          const result = await ipcRenderer.invoke('launch-gifme', appPath);
+          addToLog(`Result from launch-gifme: ${JSON.stringify(result)}`);
+          
+          if (result.success) {
+            setTimeout(() => {
+              quitApp();
+            }, 2000);
+          } else {
+            updateStatus(`Could not launch GIFME: ${result.error || 'Unknown error'}`);
+          }
+        } catch (error) {
+          addToLog(`Error launching GIFME: ${error.message}`);
+          updateStatus(`Error launching GIFME: ${error.message}`);
+        }
+      } else {
+        updateStatus('Could not launch GIFME: Installation path not found.');
+      }
+    }
+    
+    // Quit the app
+    function quitApp() {
+      addToLog('Quitting app');
+      ipcRenderer.send('quit-app');
+    }
+    
+    // Event listeners
+    browseBtn.addEventListener('click', browseForGIFMEInstallation);
+    
+    submitPathBtn.addEventListener('click', () => {
+      const inputPath = pathInputEl.value.trim();
+      if (inputPath) {
+        appPath = inputPath;
+        updateStatus(`Installation directory set to: ${appPath}`);
+        handleAction('ready');
+      } else {
+        updateStatus('Please enter a valid path.');
+      }
+    });
+    
+    checkBtn.addEventListener('click', checkForUpdates);
+    
+    cancelBtn.addEventListener('click', async () => {
+      // Immediately update UI to show cancellation is in progress
+      updateStatus('Cancelling operation...');
+      updateInProgress = false; // Immediately stop progress updates
+      handleAction('cancelled');
+      
+      try {
+        // Tell the main process to cancel the operation
+        const result = await ipcRenderer.invoke('cancel-download');
+        addToLog(`Cancel result: ${JSON.stringify(result)}`);
+        
+        // Update the status with the result
+        updateStatus('Operation cancelled by user.');
+      } catch (error) {
+        addToLog(`Error cancelling operation: ${error.message}`);
+        updateStatus(`Error cancelling operation: ${error.message}`);
+        handleAction('error');
+      }
+    });
+    
+    launchBtn.addEventListener('click', launchGIFME);
+    
+    quitBtn.addEventListener('click', quitApp);
+    
+    // IPC event listeners
+    ipcRenderer.on('download-progress', (event, { percent, received, total }) => {
+      if (!updateInProgress) return; // Don't update if cancelled
+      
+      // Format the received and total bytes in a human-readable format
+      const formatBytes = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      };
+      
+      const receivedFormatted = formatBytes(received);
+      const totalFormatted = formatBytes(total);
+      
+      addToLog(`Download progress: ${percent}% (${receivedFormatted}/${totalFormatted})`);
+      updateProgress(percent);
+      progressTextEl.textContent = `${percent}% (${receivedFormatted}/${totalFormatted})`;
+    });
+    
+    ipcRenderer.on('install-progress', (event, { status, percent }) => {
+      if (!updateInProgress) return; // Don't update if cancelled
+      
+      addToLog(`Install progress: ${status} (${percent}%)`);
+      updateStatus(status);
+      updateProgress(percent);
+      progressTextEl.textContent = `${percent}%`;
+    });
+    
+    // Add a cancel-operation event handler
+    ipcRenderer.on('cancel-operation', () => {
+      updateStatus('Operation cancelled by user.');
+      updateInProgress = false;
+      handleAction('cancelled');
+    });
+    
+    // Keep the existing cancel-download handler for backward compatibility
+    ipcRenderer.on('cancel-download', () => {
+      updateStatus('Download cancelled.');
+      updateInProgress = false;
+      handleAction('cancelled');
+    });
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      addToLog('GIFME Updater started');
+      updateProgress(0);
+      
+      // Always prompt the user to select the installation directory
+      updateStatus('Please select your GIFME installation directory');
+      handleAction('select-path');
+    });
+    
+    // Add immediate initialization in case DOMContentLoaded already fired
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      addToLog('Document already loaded, initializing now');
+      updateProgress(0);
+      updateStatus('Please select your GIFME installation directory');
+      handleAction('select-path');
+    }
+  </script>
+</body>
+</html>

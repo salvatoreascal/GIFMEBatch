@@ -2,31 +2,59 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-brightgreen.svg)](https://github.com/salvatoreascal/gifme)
+[![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-orange.svg)](https://github.com/salvatoreascal/gifme/releases)
 
 GIFME Batch gif converter is a user-friendly desktop app that can convert batches of MP4s to optimized GIFs with just a few clicks.
 
+## 🚀 What's New in v1.1.0
+
+### New Features
+- **Enhanced Cropping Tool**: Improved UI with better visual feedback and crop indicators
+- **File Size Estimator**: Predict output file size before conversion
+- **Preview Generation**: Generate previews to test your settings before full conversion
+- **Text Overlay Support**: Add custom text to the top, middle, or bottom of your GIFs
+- **PNG Sequence Output**: Option to output as PNG sequence instead of GIF
+- **Expanded Video Format Support**: Now supports MOV, AVI, MKV, and WEBM in addition to MP4
+- **Built-in Update System**: Receive and install updates directly within the app
+- **Improved Progress Tracking**: Enhanced progress bar with ETA and detailed status
+
+### Improvements
+- **Performance Optimizations**: Reduced UI freezing during thumbnail generation and cropping
+- **Enhanced UI/UX**: More intuitive interface with better visual feedback
+- **Improved Error Handling**: Better error messages and recovery options
+- **Expanded Quality Settings**: More control over output quality and file size
+
 ## Features
 
-- Drag and drop MP4 files for conversion
+- Drag and drop video files for conversion
 - Batch processing of multiple videos at once
 - Preview thumbnails of videos before conversion
 - High-quality GIF conversion with optimized settings
 - Advanced cropping tool to select specific areas of videos
+- Text overlay options for adding captions to your GIFs
+- File size estimation before conversion
+- Preview generation to test settings
 - Real-time conversion progress with ETA and file information
 - Customizable quality settings (FPS, colors, optimization level)
 - Save and load custom presets for different conversion needs
+- Output as GIF or PNG sequence
 - Bundled with FFmpeg and Gifsicle - no external dependencies required
 - Simple and intuitive user interface
-- Automatic updates via standalone updater
+- Automatic updates via built-in updater
 - Support development with Solana donations
 
 ## Screenshots
 
 ![GIFME Main Interface](screenshots/main-screenshot.png)
+![Built-in Updater](screenshots/nativeupdater-screenshot.png)
 ![Quality Settings](screenshots/quality-screenshot.png)
+![Estimate and Preview](screenshots/estimateandpreview-screenshot.png)
 ![Crop Tool](screenshots/crop-screenshot.png)
+![Standalone Updater](screenshots/standaloneupdater-screenshot.png)
 
 ## Installation
+
+## UPDATE: ALL RELEASES ASIDE FROM CLONING NOW INCLUDE THE FFMPEG DEPENDENCIES.
 
 ### Windows Installer
 
@@ -42,7 +70,14 @@ GIFME Batch gif converter is a user-friendly desktop app that can convert batche
 
 ## Updates
 
-### Using the Updater
+### Using the Built-in Updater
+
+1. When a new update is available, you'll see a notification in the top-right corner of the app
+2. Click on the notification to view update details
+3. Choose "Download & Install" to automatically update the application
+4. The app will download the update, close, and install the new version
+
+### Using the Standalone Updater
 
 1. Download the latest `GIFME-Updater.exe` from the [releases page](https://github.com/salvatoreascal/gifme/releases)
 2. Run the updater application
@@ -59,15 +94,18 @@ GIFME Batch gif converter is a user-friendly desktop app that can convert batche
 ## Usage
 
 1. Launch the GIFME application
-2. Drag and drop MP4 files onto the drop zone, or click to browse for files
-3. Select a save location for the converted GIFs
+2. Drag and drop video files onto the drop zone, or click to browse for files
+3. Select a save location for the converted files
 4. Customize conversion settings (optional):
    - Adjust quality settings (FPS, colors, optimization)
    - Apply crops to select specific areas of videos
+   - Add text overlays to your GIFs
+   - Choose between GIF or PNG sequence output
    - Save your settings as a preset for future use
-5. Click the "Convert to GIF" button
-6. Monitor conversion progress in real-time
-7. The converted GIFs will be saved to the selected location
+5. Generate a preview or estimate file size (optional)
+6. Click the "Convert to GIF" button
+7. Monitor conversion progress in real-time
+8. The converted files will be saved to the selected location
 
 ## Advanced Features
 
@@ -80,15 +118,42 @@ GIFME Batch gif converter is a user-friendly desktop app that can convert batche
 5. A "CROPPED" indicator will appear on the video thumbnail
 6. To remove a crop, select the video and click "Reset Crop"
 
+### Text Overlay
+
+1. Go to the "Quality Settings" tab
+2. Enter text in the Top, Middle, or Bottom text fields
+3. Adjust text size and color as needed
+4. Select which files to apply the text overlay to
+5. Generate a preview to see how the text will appear
+
+### File Size Estimator
+
+1. Go to the "Quality Settings" tab
+2. Scroll down to the "File Size Estimator" section
+3. Select a file from the dropdown
+4. The estimated output file size will be displayed
+5. Adjust quality settings to see how they affect the file size
+
+### Preview Generation
+
+1. Go to the "Quality Settings" tab
+2. Scroll down to the "Preview" section
+3. Select a file from the dropdown
+4. Click "Generate Preview" to create a preview with current settings
+5. The preview will be displayed along with information about dimensions, colors, and frame count
+
 ### Quality Settings
 
-1. Click on the "Quality" tab
-2. Adjust the following settings:
+1. Click on the "Quality Settings" tab
+2. Choose an output format (GIF or PNG Sequence)
+3. Adjust the following settings:
    - FPS (frames per second): Higher values create smoother animations but larger files
+   - Scale: Resize the output (e.g., 480:-1 maintains aspect ratio with width of 480px)
    - Colors: Reduce colors to decrease file size
    - Optimization level: Higher values create smaller files but take longer to process
    - Lossy compression: Reduce file size with some quality loss
-3. Click "Save as Preset" to store your settings for future use
+   - Dithering: Choose dithering method for better color appearance
+4. Click "Save as Preset" to store your settings for future use
 
 ### Presets
 
@@ -144,7 +209,7 @@ Due to GitHub file size limitations, FFmpeg executables are not included in this
    npm start
    ```
 
-### Building the Executable
+### Building the Portable Executable
 
 1. Make sure you have the FFmpeg and Gifsicle binaries in the `ffmpeg-win` and `gifsicle-win` directories
 
@@ -168,9 +233,9 @@ Due to GitHub file size limitations, FFmpeg executables are not included in this
 
 1. Build the updater executable:
    ```
-   .\build-updater.bat
+   .\build-standalone-updater.bat
    ```
-2. The updater will be created as `dist_v2\GIFME-Updater.exe`
+2. The updater will be created as `dist_v2\updater-build\GIFME Updater-win32-x64\GIFME-Updater.exe`
 
 ## Contributing
 
@@ -197,7 +262,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 If you find this application useful, consider supporting development by donating to our Solana wallet:
 
 ```
-8ZwXjQsVPiQRGgM4qhNiWYmJLaYnJjhwwmXpYEDYE7Gn
+AfT3cj981fHVbgnssm1FPDjFHQwEe4HiGPoEQcWf47rb
 ```
 
 ## Contact
