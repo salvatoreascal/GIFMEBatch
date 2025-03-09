@@ -1,8 +1,11 @@
 # GIFME - Batch MP4 to GIF Converter
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Platform: Windows](https://img.shields.io/badge/Platform-Windows-brightgreen.svg)](https://github.com/salvatoreascal/gifme)
-[![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-orange.svg)](https://github.com/salvatoreascal/gifme/releases)
+![GitHub License](https://img.shields.io/github/license/salvatoreascal/GIFMEBatch?style=for-the-badge&color=blue)
+![Static Badge](https://img.shields.io/badge/Windows-Windows?style=for-the-badge&label=Platform)
+![GitHub Release](https://img.shields.io/github/v/release/salvatoreascal/GIFMEBatch?style=for-the-badge&color=orange)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/salvatoreascal/GIFMEBatch/total?style=for-the-badge&color=yellow)
+
+
 
 GIFME Batch gif converter is a user-friendly desktop app that can convert batches of MP4s to optimized GIFs with just a few clicks.
 
